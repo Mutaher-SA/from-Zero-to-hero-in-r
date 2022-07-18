@@ -11,7 +11,7 @@
 
 <meta name="author" content="Batool Almarzouq" />
 
-<meta name="date" content="2022-07-11" />
+<meta name="date" content="2022-07-17" />
 
 <title>Session 5 Summary</title>
 
@@ -365,30 +365,71 @@ pre code {
 
 <h1 class="title toc-ignore">Session 5 Summary</h1>
 <h4 class="author">Batool Almarzouq</h4>
-<h4 class="date">2022-07-11</h4>
+<h4 class="date">2022-07-17</h4>
 
 </div>
 
 
 <div id="loading-package" class="section level2">
 <h2>Loading package</h2>
-<pre class="r"><code>## load the tidyverse
+<pre class="r"><code>## load the tidyverse library
 library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.2.1</code></pre>
 <pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
 <pre><code>## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
 ## ✔ tibble  3.1.7     ✔ dplyr   1.0.9
 ## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
 ## ✔ readr   2.1.2     ✔ forcats 0.5.1</code></pre>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## Warning: package &#39;purrr&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## Warning: package &#39;forcats&#39; was built under R version 4.2.1</code></pre>
 <pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(here)</code></pre>
-<pre><code>## here() starts at /Users/batool/Documents/from-Zero-to-hero-in-r</code></pre>
+<pre class="r"><code>## load the here library
+library(here)</code></pre>
+<pre><code>## Warning: package &#39;here&#39; was built under R version 4.2.1</code></pre>
+<pre><code>## here() starts at G:/R_testing/Zero_to_hero/from-Zero-to-hero-in-r</code></pre>
+<pre class="r"><code>## This is Ahmad work</code></pre>
+<pre class="r"><code>DT_dataset &lt;- read.csv(here(&quot;data&quot;,&quot;SAFI_clean.csv&quot;))
+glimpse(DT_dataset)</code></pre>
+<pre><code>## Rows: 131
+## Columns: 14
+## $ key_ID               &lt;int&gt; 1, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15…
+## $ village              &lt;chr&gt; &quot;God&quot;, &quot;God&quot;, &quot;God&quot;, &quot;God&quot;, &quot;God&quot;, &quot;God&quot;, &quot;God&quot;, …
+## $ interview_date       &lt;chr&gt; &quot;2016-11-17T00:00:00Z&quot;, &quot;2016-11-17T00:00:00Z&quot;, &quot;…
+## $ no_membrs            &lt;int&gt; 3, 7, 10, 7, 7, 3, 6, 12, 8, 12, 6, 7, 6, 10, 5, …
+## $ years_liv            &lt;int&gt; 4, 9, 15, 6, 40, 3, 38, 70, 6, 23, 20, 20, 8, 20,…
+## $ respondent_wall_type &lt;chr&gt; &quot;muddaub&quot;, &quot; muddaub&quot;, &quot; burntbricks&quot;, &quot; burntbri…
+## $ rooms                &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 3, 1, 5, 1, 3, 1, 3, 2, 1, 1…
+## $ memb_assoc           &lt;chr&gt; &quot;NULL&quot;, &quot;yes&quot;, &quot;NULL&quot;, &quot;NULL&quot;, &quot;NULL&quot;, &quot;NULL&quot;, &quot;n…
+## $ affect_conflicts     &lt;chr&gt; &quot;NULL&quot;, &quot;once&quot;, &quot;NULL&quot;, &quot;NULL&quot;, &quot;NULL&quot;, &quot;NULL&quot;, &quot;…
+## $ liv_count            &lt;int&gt; 1, 3, 1, 2, 4, 1, 1, 2, 3, 2, 2, 2, 3, 3, 3, 4, 1…
+## $ items_owned          &lt;chr&gt; &quot;bicycle;television;solar_panel;table&quot;, &quot;cow_cart…
+## $ no_meals             &lt;int&gt; 2, 2, 2, 2, 2, 2, 3, 2, 3, 3, 2, 3, 2, 3, 2, 3, 2…
+## $ months_lack_food     &lt;chr&gt; &quot;Jan&quot;, &quot;Jan;Sept;Oct;Nov;Dec&quot;, &quot;Jan;Feb;Mar;Oct;N…
+## $ instanceID           &lt;chr&gt; &quot;uuid:ec241f2c-0609-46ed-b5e8-fe575f6cefef&quot;, &quot;uui…</code></pre>
+<pre class="r"><code>##villge_name &lt;- DT_dataset$village
+##view(villge_name)
+
+villge_name_uni &lt;- DT_dataset$village
+Count_village &lt;- length(unique(villge_name_uni))
+##view(Count_village)
+
+data_villag &lt;- DT_dataset %&gt;%
+               select(village:respondent_wall_type) %&gt;%   
+               filter (village == &quot;God&quot; , no_membrs &gt; 5)
+view(data_villag)</code></pre>
 </div>
 <div id="working-directory" class="section level2">
 <h2>Working directory</h2>
 <pre class="r"><code>getwd()</code></pre>
-<pre><code>## [1] &quot;/Users/batool/Documents/from-Zero-to-hero-in-r&quot;</code></pre>
+<pre><code>## [1] &quot;G:/R_testing/Zero_to_hero/from-Zero-to-hero-in-r&quot;</code></pre>
 </div>
 <div id="loading-the-data" class="section level2">
 <h2>Loading the data</h2>
@@ -901,6 +942,7 @@ add the number of observations (hint: see <code>?n</code>).</p>
 <h2 id="solution-4">Solution</h2>
 <pre class="r"><code># if not already included, add month, year, and day columns
 library(lubridate) # load lubridate if not already loaded</code></pre>
+<pre><code>## Warning: package &#39;lubridate&#39; was built under R version 4.2.1</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;lubridate&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:base&#39;:

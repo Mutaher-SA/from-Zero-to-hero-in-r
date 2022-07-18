@@ -3,6 +3,9 @@ title: "Session 5 Summary"
 author: "Batool Almarzouq"
 date: "`r Sys.Date()`"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -12,10 +15,57 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Loading package
 
 ```{r}
-## load the tidyverse
+## load the tidyverse library
 library(tidyverse)
+## load the here library
 library(here)
+## This is Ahmad work
 
+
+```
+
+
+```{r}
+DT_dataset <- read.csv(here("data","SAFI_clean.csv"))
+glimpse(DT_dataset)
+
+##villge_name <- DT_dataset$village
+##view(villge_name)
+
+villge_name_uni <- DT_dataset$village
+Count_village <- length(unique(villge_name_uni))
+##view(Count_village)
+
+data_villag_Rooms <- DT_dataset %>%
+                        select(village:respondent_wall_type) %>%   
+                        filter (village == "God" , no_membrs > 5 & no_membrs < 9 )
+view(data_villag_Rooms)
+
+data_villag_Memb_assoc <- DT_dataset %>%
+                        select(village, memb_assoc) %>%
+                        filter(memb_assoc == "yes")
+view(data_villag_Memb_assoc)
+
+data_avg_memb <- DT_dataset %>%
+                        mutate(avg_people = round(no_membrs / rooms))
+view(data_avg_memb) 
+
+data_no_missing_value <- DT_dataset %>%
+                        filter(!is.na(affect_conflicts))
+
+view(data_no_missing_value)
+
+data_meal <- DT_dataset %>%
+            select(key_ID,no_membrs,no_meals,liv_count) %>%
+            mutate(total_meal = no_membrs * no_meals) %>%
+            filter(total_meal > 20)
+           
+view(data_meal)
+
+avg_member <- DT_dataset %>%
+            group_by(village) %>%
+            summarise (the_mean_of_members=round(mean(no_membrs)))
+view(avg_member)
 ```
 
 ## Working directory
@@ -58,7 +108,9 @@ interviews %>%
 select(village:respondent_wall_type)
 
 ```
-To choose rows based on specific criteria, we can use the `filter()` function.
+
+To choose rows based on specific criteria, we can use the `filter()`
+function.
 
 ```{r, purl = FALSE}
 # filters observations where village name is "Chirodzo" 
@@ -67,7 +119,8 @@ interviews %>%
 filter(village == "Chirodzo")
 ```
 
-We can also form "and" statements with the `&` operator instead of commas:
+We can also form "and" statements with the `&` operator instead of
+commas:
 
 ```{r}
 
@@ -78,7 +131,8 @@ filter(village == "Chirodzo" &
                    no_meals > 2)
 ```
 
-To form "or" statements we use the logical operator for "or," which is the vertical bar (|): 
+To form "or" statements we use the logical operator for "or," which is
+the vertical bar (\|):
 
 ```{r}
 # filters observations with "|" logical operator
@@ -88,8 +142,8 @@ filter(village == "Chirodzo" | village == "Ruaca")
 
 ```
 
-The last option, *pipes*, are a recent addition to R. Pipes let you take the
-output of one function and send it directly to the next
+The last option, *pipes*, are a recent addition to R. Pipes let you take
+the output of one function and send it directly to the next
 
 ```{r}
 
@@ -99,8 +153,8 @@ interviews %>%
 
 ```
 
-If we want to create a new object with this smaller version of the data, we
-can assign it a new name:
+If we want to create a new object with this smaller version of the data,
+we can assign it a new name:
 
 ```{r, purl = FALSE}
 interviews_ch <- interviews %>%
@@ -113,10 +167,10 @@ interviews_ch
 
 > ## Exercise (10 mins)
 >
->  Using pipes, subset the `interviews` data to include interviews
-> where respondents were members of an irrigation association
-> (`memb_assoc`) and retain only the columns `affect_conflicts`,
-> `liv_count`, and `no_meals`.
+> Using pipes, subset the `interviews` data to include interviews where
+> respondents were members of an irrigation association (`memb_assoc`)
+> and retain only the columns `affect_conflicts`, `liv_count`, and
+> `no_meals`.
 >
 > > ## Solution
 > >
@@ -125,26 +179,28 @@ interviews_ch
 > >     filter(memb_assoc == "yes") %>%
 > >     select(affect_conflicts, liv_count, no_meals)
 > > ```
-> {: .solution}
-{: .challenge}
+> >
+> > {: .solution} {: .challenge}
 
 ### Mutate
 
-Frequently you'll want to create new columns based on the values in existing
-columns.
+Frequently you'll want to create new columns based on the values in
+existing columns.
 
-We might be interested in the ratio of number of household members
-to rooms used for sleeping (i.e. avg number of people per room):
-
+We might be interested in the ratio of number of household members to
+rooms used for sleeping (i.e. avg number of people per room):
 
 ```{r, purl = FALSE}
 interviews %>%
     mutate(people_per_room = no_membrs / rooms)
 ```
 
-We may be interested in investigating whether being a member of an irrigation association had any effect on the ratio of household members
-to rooms. To look at this relationship, we will first remove data from our dataset where the respondent didn't answer the question of whether they were a member of an irrigation association.
-These cases are recorded as "NULL" in the dataset.
+We may be interested in investigating whether being a member of an
+irrigation association had any effect on the ratio of household members
+to rooms. To look at this relationship, we will first remove data from
+our dataset where the respondent didn't answer the question of whether
+they were a member of an irrigation association. These cases are
+recorded as "NULL" in the dataset.
 
 To remove these cases, we could insert a `filter()` in the chain:
 
@@ -154,45 +210,44 @@ interviews %>%
     mutate(people_per_room = no_membrs / rooms)
 ```
 
-The `!` symbol negates this and says we only want values of `FALSE`, where `memb_assoc` **is
-not** missing.
+The `!` symbol negates this and says we only want values of `FALSE`,
+where `memb_assoc` **is not** missing.
 
 > ## Exercise (15 mins)
 >
->  Create a new dataframe from the `interviews` data that meets the following
->  criteria: contains only the `village` column and a new column called
->  `total_meals` containing a value that is equal to the total number of meals
->  served in the household per day on average (`no_membrs` times `no_meals`).
->  Only the rows where `total_meals` is greater than 20 should be shown in the
->  final dataframe.
+> Create a new dataframe from the `interviews` data that meets the
+> following criteria: contains only the `village` column and a new
+> column called `total_meals` containing a value that is equal to the
+> total number of meals served in the household per day on average
+> (`no_membrs` times `no_meals`). Only the rows where `total_meals` is
+> greater than 20 should be shown in the final dataframe.
 >
->  **Hint**: think about how the commands should be ordered to produce this data
->  frame!
+> **Hint**: think about how the commands should be ordered to produce
+> this data frame!
 >
 > > ## Solution
 > >
-> > ``` {r}
+> > ```{r}
 > > interviews_total_meals <- interviews %>%
 > >     mutate(total_meals = no_membrs * no_meals) %>%
 > >     filter(total_meals > 20) %>%
 > >     select(village, total_meals)
 > > ```
-> {: .solution}
-{: .challenge}
-
+> >
+> > {: .solution} {: .challenge}
 
 #### Counting
 
-For example, if we wanted to count the number of rows of data for
-each village, we would do:
+For example, if we wanted to count the number of rows of data for each
+village, we would do:
 
 ```{r, purl = FALSE}
 interviews %>%
     count(village)
 ```
 
-For convenience, `count()` provides the `sort` argument to get results in
-decreasing order:
+For convenience, `count()` provides the `sort` argument to get results
+in decreasing order:
 
 ```{r, purl = FALSE}
 interviews %>%
@@ -201,13 +256,12 @@ interviews %>%
 
 ### Split-apply-combine data analysis and the summarize() function
 
-Many data analysis tasks can be approached using the *split-apply-combine*
-paradigm: split the data into groups, apply some analysis to each group, and
-then combine the results. **`dplyr`** makes this very easy through the use of
-the `group_by()` function.
+Many data analysis tasks can be approached using the
+*split-apply-combine* paradigm: split the data into groups, apply some
+analysis to each group, and then combine the results. **`dplyr`** makes
+this very easy through the use of the `group_by()` function.
 
-So to compute the average household size by
-village:
+So to compute the average household size by village:
 
 ```{r, purl = FALSE}
 interviews %>%
@@ -215,8 +269,9 @@ interviews %>%
     summarize(mean_no_membrs = mean(no_membrs))
 ```
 
-You may also have noticed that the output from these calls doesn't run off the
-screen anymore. It's one of the advantages of `tbl_df` over dataframe.
+You may also have noticed that the output from these calls doesn't run
+off the screen anymore. It's one of the advantages of `tbl_df` over
+dataframe.
 
 You can also group by multiple columns:
 
@@ -226,8 +281,8 @@ interviews %>%
     summarize(mean_no_membrs = mean(no_membrs))
 ```
 
-Note that the output is a grouped tibble. To obtain an ungrouped tibble, use the
-`ungroup` function:
+Note that the output is a grouped tibble. To obtain an ungrouped tibble,
+use the `ungroup` function:
 
 ```{r, purl = FALSE}
 interviews %>%
@@ -236,10 +291,10 @@ interviews %>%
     ungroup()
 ```
 
-When grouping both by `village` and `membr_assoc`, we see rows in our table for
-respondents who did not specify whether they were a member of an irrigation
-association. We can exclude those data from our table using a filter step.
-
+When grouping both by `village` and `membr_assoc`, we see rows in our
+table for respondents who did not specify whether they were a member of
+an irrigation association. We can exclude those data from our table
+using a filter step.
 
 ```{r, purl = FALSE}
 interviews %>%
@@ -248,10 +303,10 @@ interviews %>%
     summarize(mean_no_membrs = mean(no_membrs))
 ```
 
-Once the data are grouped, you can also summarize multiple variables at the same
-time (and not necessarily on the same variable). For instance, we could add a
-column indicating the minimum household size for each village for each group
-(members of an irrigation association vs not):
+Once the data are grouped, you can also summarize multiple variables at
+the same time (and not necessarily on the same variable). For instance,
+we could add a column indicating the minimum household size for each
+village for each group (members of an irrigation association vs not):
 
 ```{r, purl = FALSE}
 interviews %>%
@@ -261,10 +316,9 @@ interviews %>%
               min_membrs = min(no_membrs))
 ```
 
-It is sometimes useful to rearrange the result of a query to inspect the values.
-For instance, we can sort on `min_membrs` to put the group with the smallest
-household first:
-
+It is sometimes useful to rearrange the result of a query to inspect the
+values. For instance, we can sort on `min_membrs` to put the group with
+the smallest household first:
 
 ```{r, purl = FALSE}
 interviews %>%
@@ -275,8 +329,8 @@ interviews %>%
     arrange(min_membrs)
 ```
 
-To sort in descending order, we need to add the `desc()` function. If we want to
-sort the results by decreasing order of minimum household size:
+To sort in descending order, we need to add the `desc()` function. If we
+want to sort the results by decreasing order of minimum household size:
 
 ```{r, purl = FALSE}
 interviews %>%
@@ -289,9 +343,9 @@ interviews %>%
 
 > ## Exercise
 >
-> How many households in the survey have an average of
-> two meals per day? Three meals per day? Are there any other numbers
-> of meals represented?
+> How many households in the survey have an average of two meals per
+> day? Three meals per day? Are there any other numbers of meals
+> represented?
 >
 > > ## Solution
 > >
@@ -299,7 +353,8 @@ interviews %>%
 > > interviews %>%
 > >    count(no_meals)
 > > ```
-> {: .solution}
+> >
+> > {: .solution}
 >
 > Use `group_by()` and `summarize()` to find the mean, min, and max
 > number of household members for each village. Also add the number of
@@ -317,7 +372,8 @@ interviews %>%
 > >       n = n()
 > >   )
 > > ```
-> {: .solution}
+> >
+> > {: .solution}
 >
 > What was the largest household interviewed in each month?
 >
@@ -333,6 +389,5 @@ interviews %>%
 > >     group_by(year, month) %>%
 > >     summarize(max_no_membrs = max(no_membrs))
 > > ```
-> {: .solution}
-{: .challenge}
-
+> >
+> > {: .solution} {: .challenge}
