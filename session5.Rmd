@@ -1,0 +1,60 @@
+---
+title: "Session_Coffe"
+author: "Ahmad"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library("here")
+library("tidyverse")
+library("tidytuesdayR")
+
+
+DataCoffee <- read.csv("https://raw.githubusercontent.com/jldbc/coffee-quality-database/master/data/arabica_ratings_raw.csv")
+glimpse(DataCoffee)
+
+plotCountry <- DataCoffee %>%
+               select(quality_score,Country.of.Origin,Owner,Company,Number.of.Bags,Moisture) %>%
+               filter(quality_score > 87)
+
+               ggplot(plotCountry, aes(x=Owner, y=Country.of.Origin)) +
+               geom_bar(stat="identity", width=0.2) +
+               coord_flip()  
+                
+plotround <-DataCoffee %>%
+            select(quality_score,Country.of.Origin,Owner,Company,Number.of.Bags,Moisture,Company)%>%
+            filter(quality_score > 87 & !is.na(DataCoffee$Company))
+            
+            ggplot(plotround,aes(x =quality_score , fill = Company) ) +
+            geom_bar() +
+            coord_polar(theta = "y") +
+            scale_x_discrete("")
+                
+PlotFacet <-DataCoffee %>%
+            select(quality_score,Country.of.Origin,Owner,Company,Number.of.Bags,Moisture,Company)%>%
+            filter(quality_score > 88 & !is.na(DataCoffee$Company))              
+            
+            ggplot(PlotFacet,aes(x = quality_score, fill = Company) ) +
+            geom_bar() + 
+            facet_grid(~Company)   
+
+Plotpoint <-DataCoffee %>%
+            select(quality_score,Country.of.Origin,Owner,Company,Number.of.Bags,Moisture,Company)%>%
+            filter(quality_score > 88)              
+            
+            ggplot(Plotpoint,aes(x = Country.of.Origin, ..count..) ) +
+            geom_point() +
+            coord_flip()  
+                          
+              
+              
+      
+
+
+```
+
